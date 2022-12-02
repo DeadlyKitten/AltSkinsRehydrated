@@ -1,13 +1,12 @@
-﻿using BepInEx;
+﻿using AltSkinsRehydrated.Data;
+using BepInEx;
+using Nick;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using Nick;
-using UnityEngine;
-using System.Linq;
 using System.Diagnostics;
-using AltSkinsRehydrated.Data;
+using System.IO;
+using System.Linq;
+using UnityEngine;
 
 namespace AltSkinsRehydrated
 {
@@ -27,9 +26,9 @@ namespace AltSkinsRehydrated
             // LoadLegacySkins();
 
             watch.Stop();
-            Plugin.Instance.doneLoading = true;
-            Plugin.Instance.milliseconds = (int)watch.ElapsedMilliseconds;
-            Plugin.LogInfo($"Loaded {AllSkins.Count} skins in {watch.ElapsedMilliseconds} ms.");
+            AltSkinsPlugin.Instance.doneLoading = true;
+            AltSkinsPlugin.Instance.milliseconds = (int)watch.ElapsedMilliseconds;
+            AltSkinsPlugin.LogInfo($"Loaded {AllSkins.Count} skins in {watch.ElapsedMilliseconds} ms.");
         }
 
         static void LoadSkins()
@@ -43,18 +42,18 @@ namespace AltSkinsRehydrated
             if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
             string[] files = Directory.GetFiles(folder, "*.nickskin", SearchOption.AllDirectories);
 
-            Plugin.Instance.totalChar = files.Count();
+            AltSkinsPlugin.Instance.totalChar = files.Count();
 
             foreach (var file in files)
             {
                 string loggedName = file.Substring(file.IndexOf("Skins"));
                 try
                 {
-                    Plugin.LogInfo($"Loading skin: {loggedName}");
+                    AltSkinsPlugin.LogInfo($"Loading skin: {loggedName}");
                     CustomSkin skin = new CustomSkin(file);
                     if (skin.metadata.version < 2) continue;
                     AllSkins.Add(skin);
-                    Plugin.Instance.loadedChar++;
+                    AltSkinsPlugin.Instance.loadedChar++;
 
                     var newSkinMeta = new CharacterMetaData.CharacterSkinMetaData[]
                     {
@@ -74,11 +73,44 @@ namespace AltSkinsRehydrated
                 }
                 catch (Exception e)
                 {
-                    Plugin.LogError($"Failed to load skin: {loggedName}");
-                    Plugin.LogError(e.ToString());
+                    AltSkinsPlugin.LogError($"Failed to load skin: {loggedName}");
+                    AltSkinsPlugin.LogError(e.ToString());
                 }
 
             }
+        }
+
+        public static bool TryGetSkinIndexForChar(string charID, string skinID, out int index)
+        {
+            AltSkinsPlugin.LogInfo($"Searching for skin [{skinID}] in character [{charID}]");
+
+            index = -1;
+            var charMeta = charMetas.First(x => x.id == charID);
+
+            if (charMeta)
+            {
+                for (var i = 0; i < charMeta.skins.Length; i++)
+                    if (charMeta.skins[i].id == skinID) index = i;
+            }
+
+            AltSkinsPlugin.LogInfo($"index = {index}");
+
+            return index >= 0;        
+        }
+
+        public static bool TryGetSkinID(byte charIndex, byte skinIndex, out string skinID)
+        {
+            skinID = string.Empty;
+            if (charIndex >= 0 && charIndex < charMetas.Count)
+            {
+                var charMeta = charMetas[charIndex];
+                if (skinIndex >= 0 && skinIndex < charMeta.skins.Length)
+                {
+                    skinID = charMeta.skins[skinIndex].id;
+                }
+            }
+
+            return !string.IsNullOrEmpty(skinID);
         }
 
         public static bool TryGetSkinById(string id, out CustomSkin skin)

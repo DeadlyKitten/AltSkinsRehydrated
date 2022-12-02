@@ -8,7 +8,7 @@ namespace AltSkinsRehydrated.HarmonyPatches
     {
         static void Prefix(ref AgentLoading.LoadRequest req)
         {
-            Plugin.LogInfo($"Agent Unloading Request: {req.Id}");
+            AltSkinsPlugin.LogInfo($"Agent Unloading Request: {req.Id}");
 
             var skin = SkinManager.GetSkinById(req.Id);
             if (skin != null)

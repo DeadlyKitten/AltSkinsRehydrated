@@ -1,7 +1,6 @@
 ﻿using HarmonyLib;
 using Nick;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace AltSkinsRehydrated.HarmonyPatches

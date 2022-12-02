@@ -11,7 +11,11 @@ namespace AltSkinsRehydrated.HarmonyPatches.Online
         {
             if (__instance.skin > 1)
             {
-                Plugin.onlineSkin = __instance.skin;
+                if (SkinManager.TryGetSkinID(__instance.character, __instance.skin, out var skinID))
+                    OnlineManager.SetOnlineSkin(skinID);
+                else
+                    OnlineManager.SetOnlineSkin(string.Empty);
+
                 __instance.skin = 0;
             }
         }

@@ -81,27 +81,36 @@ namespace AltSkinsRehydrated.Data
 
         IEnumerator LoadAssetBundleCoroutine(AgentLoading.LoadState loadstate)
         {
-            Plugin.LogInfo($"Loading Assetbundle for {name}...");
+            AltSkinsPlugin.LogInfo($"Loading Assetbundle for {name}...");
             loading = true;
             using (var zip = ZipFile.OpenRead(filePath))
             {
                 var stream = new MemoryStream();
-                zip.GetEntry(AssetBundlePath).Open().CopyTo(stream);
+                var entry = zip.GetEntry(AssetBundlePath);
+                if (entry == null)
+                {
+                    AltSkinsPlugin.LogError("Failed to load AssetBundle. Aborting!");
+                    yield break;
+                }
+                entry.Open().CopyTo(stream);
                 var request = AssetBundle.LoadFromStreamAsync(stream);
                 loadstate.op = request;
 
                 while (!request.isDone) yield return null;
+                if (!request.assetBundle)
+                {
+                    AltSkinsPlugin.LogError("Failed to load AssetBundle. Aborting!");
+                    yield break;
+                }
                 loadstate.phase = AgentLoading.LoadPhase.Loading;
-
                 bundle = request.assetBundle;
-
                 var sceneLoad = SceneManager.LoadSceneAsync(ScenePath, LoadSceneMode.Additive);
                 loadstate.op = sceneLoad;
 
                 while (!sceneLoad.isDone) yield return null;
                 scene = SceneManager.GetSceneByPath(ScenePath);
             }
-            Plugin.LogInfo($"{name} loaded!");
+            AltSkinsPlugin.LogInfo($"{name} loaded!");
             loading = false;
         }
 
@@ -126,7 +135,7 @@ namespace AltSkinsRehydrated.Data
 
         public static Texture2D GetSkinIconByID(string id)
         {
-            Plugin.LogInfo($"Loading Skin Icon {id}");
+            AltSkinsPlugin.LogInfo($"Loading Skin Icon {id}");
             var skin = SkinManager.AllSkins.FirstOrDefault(x => x.skinId == id.Split('/')[1]);
             if (skin != null)
                 return skin.LoadPortraitTexture(id.Split('/').Last());

@@ -10,9 +10,15 @@ namespace AltSkinsRehydrated.HarmonyPatches.Online
     {
         static void Prefix(ref OnlineMatchInfoListItem onlineMatchInfoList)
         {
-            if (onlineMatchInfoList != null && onlineMatchInfoList.currUser != null && onlineMatchInfoList.currUser.IsLocal)
+            if (onlineMatchInfoList != null && onlineMatchInfoList.currUser != null)
             {
-                onlineMatchInfoList.skinIdx = Plugin.onlineSkin;
+                if(OnlineManager.TryGetOnlineSkinIdForUser(onlineMatchInfoList.currUser.Id, out var skinID))
+                {
+                    if(SkinManager.TryGetSkinIndexForChar(onlineMatchInfoList.characterMetaData.id, skinID, out var index))
+                    {
+                        onlineMatchInfoList.skinIdx = index;
+                    }
+                }
             }
         }
     }

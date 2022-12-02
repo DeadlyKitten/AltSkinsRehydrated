@@ -9,11 +9,11 @@ using UnityEngine;
 
 namespace AltSkinsRehydrated
 {
-    [BepInPlugin("com.steven.nasb.altskins-rehydrated", "AltSkins Rehydrated", "0.0.1")]
+    [BepInPlugin("com.steven.nasb.altskins-rehydrated", "AltSkins Rehydrated", "1.1.0")]
     [BepInIncompatibility("legoandmars-altskins")]
-    public class Plugin : BaseUnityPlugin
+    public class AltSkinsPlugin : BaseUnityPlugin
     {
-        internal static Plugin Instance;
+        internal static AltSkinsPlugin Instance;
 
         public int totalChar = 0;
         public int loadedChar = 0;
@@ -21,8 +21,8 @@ namespace AltSkinsRehydrated
         public bool doneLoading = false;
 
         public static bool IsOnline => runner.GetField<GameRunner, GameRunner.State>("state") != GameRunner.State.Inactive;
-        public static byte onlineSkin = 1;
-        public static string onlineSkinId = string.Empty;
+
+        public OnlineLobby lobby;
 
         void Awake()
         {
@@ -32,7 +32,6 @@ namespace AltSkinsRehydrated
                 return;
             }
             Instance = this;
-            Instance.gameObject.name = "AltSkins Rehydrated";
 
             LogInfo("AltSkins Rehydrated starting up...");
 

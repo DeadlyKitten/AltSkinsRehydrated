@@ -20,7 +20,7 @@ namespace AltSkinsRehydrated.HarmonyPatches
 
         static bool Prefix(ref string ___resPath, ref Texture2D ___tex, ref int ___3, string resourcePath)
         {
-            Plugin.LogInfo($"Resource Path: {resourcePath}");
+            AltSkinsPlugin.LogInfo($"Resource Path: {resourcePath}");
 
             if (resourcePath.StartsWith("CUSTOM_"))
             {

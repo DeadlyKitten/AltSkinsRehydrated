@@ -19,7 +19,7 @@ namespace AltSkinsRehydrated.HarmonyPatches
 
                 if (!shader)
                 {
-                    Plugin.LogWarning($"Shader not found for '{shaderName}'");
+                    AltSkinsPlugin.LogWarning($"Shader not found for '{shaderName}'");
                     continue;
                 }
 
@@ -54,7 +54,8 @@ namespace AltSkinsRehydrated.HarmonyPatches
             "Shader_Fly_Trail",
             "Shader_rocket",
             "Hovl/Particles/SwordSlash",
-            "Hovl/Particles/Blend_TwoSides"
+            "Hovl/Particles/Blend_TwoSides",
+            "Hovl/Particles/Blend_CenterGlow"
         };
 
         static Dictionary<string, Shader> baseGameShaders;

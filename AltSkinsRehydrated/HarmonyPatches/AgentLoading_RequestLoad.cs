@@ -10,12 +10,12 @@ namespace AltSkinsRehydrated.HarmonyPatches
     {
         static void Prefix(ref AgentLoading.LoadRequest req, ref Dictionary<string, AgentLoading.LoadState> ___loadStates, ref int ___loadCounter)
         {
-            Plugin.LogInfo($"Agent Loading Request: {req.Id}");
+            AltSkinsPlugin.LogInfo($"Agent Loading Request: {req.Id}");
 
             var skin = SkinManager.GetSkinById(req.Id);
             if (skin != null)
             {
-                Plugin.LogInfo($"Custom skin detected! Skin ID: {req.Id}");
+                AltSkinsPlugin.LogInfo($"Custom skin detected! Skin ID: {req.Id}");
 
                 var loadstate = new AgentLoading.LoadState() { phase = AgentLoading.LoadPhase.Loading, op = new UnityEngine.AsyncOperation() };
 
